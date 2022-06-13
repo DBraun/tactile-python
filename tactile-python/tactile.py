@@ -1,408 +1,346 @@
-function makePoint( coeffs, offs, params )
-{
-	let ret = { x : 0.0, y : 0.0 }
+from preamble import EdgeShape, mul, matchSeg
+from tiling_data import TilingTypeData
+import math
 
-	for( let i = 0; i < params.length; ++i ) {
-		ret.x += coeffs[offs+i] * params[i];
-		ret.y += coeffs[offs+params.length+i] * params[i];
-	}
+def makePoint( coeffs, offs, params ):
 
-	return ret;
-};
+    x, y = 0, 0
 
-function makeMatrix( coeffs, offs, params )
-{
-	let ret = []
+    # todo: use numpy for speed
+    for i, param in enumerge(params):
+        x += coeffs[offs+i] * params[i]
+        y += coeffs[offs+params.length+i] * params[i]
 
-	for( let row = 0; row < 2; ++row ) {
-		for( let col = 0; col < 3; ++col ) {
-			let val = 0.0;
-			for( let idx = 0; idx < params.length; ++idx ) {
-				val += coeffs[offs+idx] * params[idx];
-			}
-			ret.push( val );
-			offs += params.length;
-		}
-	}
+    ret = { x : 0.0, y : 0.0 }
 
-	return ret;
-};
+    return ret
 
-const M_orients = [
-	[1.0, 0.0, 0.0,    0.0, 1.0, 0.0],   // IDENTITY
-	[-1.0, 0.0, 1.0,   0.0, -1.0, 0.0],  // ROT
-	[-1.0, 0.0, 1.0,   0.0, 1.0, 0.0],   // FLIP
-	[1.0, 0.0, 0.0,    0.0, -1.0, 0.0]   // ROFL
-];
+def makeMatrix( coeffs, offs, params ):
+    ret = []
 
-const TSPI_U = [
-	[0.5, 0.0, 0.0,    0.0, 0.5, 0.0],
-	[-0.5, 0.0, 1.0,   0.0, 0.5, 0.0]
-];
+    # todo: use numpy
+    for row in range(2):
+        for col in range(3):
+            val = 0.
 
-const TSPI_S = [
-	[0.5, 0.0, 0.0,    0.0, 0.5, 0.0],
-	[-0.5, 0.0, 1.0,   0.0, -0.5, 0.0]
-];
+            for idx, param in enumerage(params):
+                val += coeffs[offs+idx] * param
+            ret.append( val )
+            offs += len(params)
 
-class IsohedralTiling
-{
-	constructor( tp )
-	{
-		this.reset( tp );
-	}
+    return ret
 
-	reset( tp )
-	{
-		this.tiling_type = tp;
-		this.ttd = tiling_type_data[ tp ];
-		this.parameters = this.ttd.default_params.slice( 0 );
-		this.parameters.push( 1.0 );
-		this.recompute();
-	}
+M_orients = [
+    [1.0, 0.0, 0.0,    0.0, 1.0, 0.0],   # IDENTITY
+    [-1.0, 0.0, 1.0,   0.0, -1.0, 0.0],  # ROT
+    [-1.0, 0.0, 1.0,   0.0, 1.0, 0.0],   # FLIP
+    [1.0, 0.0, 0.0,    0.0, -1.0, 0.0]   # ROFL
+]
 
-	recompute()
-	{
-		const ntv = this.numVertices();
-		const np = this.numParameters();
-		const na = this.numAspects();
+TSPI_U = [
+    [0.5, 0.0, 0.0,    0.0, 0.5, 0.0],
+    [-0.5, 0.0, 1.0,   0.0, 0.5, 0.0]
+]
 
-		// Recompute tiling vertex locations.
-		this.verts = [];
-		for( let idx = 0; idx < ntv; ++idx ) {
-			this.verts.push( makePoint( this.ttd.vertex_coeffs,
-				idx * (2 * (np + 1)), this.parameters ) );
-		}
+TSPI_S = [
+    [0.5, 0.0, 0.0,    0.0, 0.5, 0.0],
+    [-0.5, 0.0, 1.0,   0.0, -0.5, 0.0]
+]
 
-		// Recompute edge transforms and reversals from orientation information.
-		this.reversals = [];
-		this.edges = []
-		for( let idx = 0; idx < ntv; ++idx ) {
-			const fl = this.ttd.edge_orientations[2*idx];
-			const ro = this.ttd.edge_orientations[2*idx+1];
-			this.reversals.push( fl != ro );
-			this.edges.push( 
-				mul( matchSeg( this.verts[idx], this.verts[(idx+1)%ntv] ),
-				M_orients[2*fl+ro] ) );
-		}
+class IsohedralTiling:
 
-		// Recompute aspect xforms.
-		this.aspects = []
-		for( let idx = 0; idx < na; ++idx ) {
-			this.aspects.push( 
-				makeMatrix( this.ttd.aspect_coeffs, 6*(np+1)*idx,
-					this.parameters ) );
-		}
-					
-		// Recompute translation vectors.
-		this.t1 = makePoint(
-			this.ttd.translation_coeffs, 0, this.parameters );
-		this.t2 = makePoint(
-			this.ttd.translation_coeffs, 2*(np+1), this.parameters );
-	}
+    def __init__(self, tp):
+        self.reset(tp)
 
-	getTilingType()
-	{
-		return this.tiling_type;
-	}
 
-	numParameters()
-	{
-		return this.ttd.num_params;
-	}
+    def reset(self, tp):
 
-	setParameters( arr )
-	{
-		if( arr.length == (this.parameters.length-1) ) {
-			this.parameters = arr.slice( 0 );
-			this.parameters.push( 1.0 );
-			this.recompute();
-		}
-	}
+        self.tiling_type = tp
+        self.ttd = TilingTypeData[ tp ]
+        self.parameters = self.ttd.default_params.slice( 0 )
+        self.parameters.append( 1.0 )
+        self.recompute()
 
-	getParameters()
-	{
-		return this.parameters.slice( 0, -1 );
-	}
+    def recompute(self):
+        ntv = self.numVertices()
+        np = self.numParameters()
+        na = self.numAspects()
 
-	numEdgeShapes()
-	{
-		return this.ttd.num_edge_shapes;
-	}
+        # Recompute tiling vertex locations.
+        self.verts = []
+        for idx in range(ntv):
+            self.verts.append( makePoint( self.ttd.vertex_coeffs,
+                idx * (2 * (np + 1)), self.parameters ) )
 
-	getEdgeShape( idx )
-	{
-		return this.ttd.edge_shapes[ idx ];
-	}
+        # Recompute edge transforms and reversals from orientation information.
+        self.reversals = []
+        self.edges = []
+        for idx in range(ntv):
+            fl = self.ttd.edge_orientations[2*idx]
+            ro = self.ttd.edge_orientations[2*idx+1]
+            self.reversals.append( fl != ro )
+            self.edges.append( 
+                mul( matchSeg( self.verts[idx], self.verts[(idx+1)%ntv] ),
+                M_orients[2*fl+ro] ) )
 
-	* shape()
-	{
-		for( let idx = 0; idx < this.numVertices(); ++idx ) {
-			const an_id = this.ttd.edge_shape_ids[idx];
+        # Recompute aspect xforms.
+        self.aspects = []
+        for idx in range(na):
+            self.aspects.append( 
+                makeMatrix( self.ttd.aspect_coeffs, 6*(np+1)*idx,
+                    self.parameters ) )
+                    
+        # Recompute translation vectors.
+        self.t1 = makePoint(
+            self.ttd.translation_coeffs, 0, self.parameters )
+        self.t2 = makePoint(
+            self.ttd.translation_coeffs, 2*(np+1), self.parameters )
 
-			yield {
-				T : this.edges[idx],
-				id : an_id,
-				shape : this.ttd.edge_shapes[ an_id ],
-				rev : this.reversals[ idx ]
-			};
-		}
-	}
+    def getTilingType(self):
+        return self.tiling_type
 
-	* parts()
-	{
-		for( let idx = 0; idx < this.numVertices(); ++idx ) {
-			const an_id = this.ttd.edge_shape_ids[idx];
-			const shp = this.ttd.edge_shapes[an_id];
+    def numParameters():
+        return self.ttd.num_params
 
-			if( (shp == EdgeShape.J) || (shp == EdgeShape.I) ) {
-				yield {
-					T : this.edges[idx],
-					id : an_id,
-					shape : shp,
-					rev : this.reversals[ idx ],
-					second : false
-				};
-			} else {
-				const indices = this.reversals[idx] ? [1,0] : [0,1];
-				const Ms = (shp == EdgeShape.U) ? TSPI_U : TSPI_S;
+    def setParameters(self, arr ):
+        if( arr.length == (self.parameters.length-1) ):
+            self.parameters = arr.slice( 0 )
+            self.parameters.append( 1.0 )
+            self.recompute()
 
-				yield {
-					T : mul( this.edges[idx], Ms[indices[0]] ),
-					id : an_id,
-					shape : shp,
-					rev : false,
-					second : false
-				};
-				
-				yield {
-					T : mul( this.edges[idx], Ms[indices[1]] ),
-					id : an_id,
-					shape : shp,
-					rev : true,
-					second : true
-				};
-			}
-		}
-	}
+    def getParameters(self):
+        return self.parameters.slice( 0, -1 )
 
-	numVertices()
-	{
-		return this.ttd.num_vertices;
-	}
+    def numEdgeShapes(self):
+        return self.ttd.num_edge_shapes
 
-	getVertex( idx )
-	{
-		return { ...this.verts[ idx ] };
-	}
+    def getEdgeShape(self, idx ):
+        return self.ttd.edge_shapes[ idx ]
 
-	vertices()
-	{
-		return this.verts.map( v => ({ ...v }) );
-	}
+    def shape(self):
+        for idx in range(self.numVertices()):
+            an_id = self.ttd.edge_shape_ids[idx]
 
-	numAspects()
-	{
-		return this.ttd.num_aspects;
-	}
-	
-	getAspectTransform( idx )
-	{
-		return [ ...this.aspects[ idx ] ];
-	}
+            yield {
+                T : self.edges[idx],
+                id : an_id,
+                shape : self.ttd.edge_shapes[ an_id ],
+                rev : self.reversals[ idx ]
+            }
 
-	getT1()
-	{
-		return { ...this.t1 };
-	}
+    def parts(self):
+        for idx in range(self.numVertices()):
+            an_id = self.ttd.edge_shape_ids[idx]
+            shp = self.ttd.edge_shapes[an_id]
 
-	getT2()
-	{
-		return { ...this.t2 };
-	}
+            if (shp == EdgeShape.J) or (shp == EdgeShape.I):
+                yield {
+                    T : self.edges[idx],
+                    id : an_id,
+                    shape : shp,
+                    rev : self.reversals[ idx ],
+                    second : false
+                }
+            else:
+                indices =  [1,0] if self.reversals[idx] else [0,1]
+                Ms = TSPI_U if (shp == EdgeShape.U) else TSPI_S
 
-	* fillRegionBounds( xmin, ymin, xmax, ymax )
-	{
-		yield* this.fillRegionQuad(
-			{ x : xmin, y : ymin },
-			{ x : xmax, y : ymin },
-			{ x : xmax, y : ymax },
-			{ x : xmin, y : ymax } );
-	}
+                yield {
+                    T : mul( self.edges[idx], Ms[indices[0]] ),
+                    id : an_id,
+                    shape : shp,
+                    rev : false,
+                    second : false
+                }
+                
+                yield {
+                    T : mul( self.edges[idx], Ms[indices[1]] ),
+                    id : an_id,
+                    shape : shp,
+                    rev : true,
+                    second : true
+                }
 
-	* fillRegionQuad( A, B, C, D )
-	{
-		const t1 = this.getT1();
-		const t2 = this.getT2();
-		const ttd = this.ttd;
-		const aspects = this.aspects;
+    def numVertices(self):
+        return self.ttd.num_vertices
 
-		let last_y;
+    def getVertex(self, idx ):
+        # return { ...self.verts[ idx ] }
+        return self.verts[ idx ]   # todo: this used to use the ... js operator
 
-		function bc( M, p ) {
-			return { 
-				x : M[0]*p.x + M[1]*p.y,
-				y : M[2]*p.x + M[3]*p.y };
-		};
+    def vertices(self):
+        # return self.verts.map( v => ({ ...v }) )
+        return self.verts # todo: this used to use the ... js operator
 
-		function sampleAtHeight( P, Q, y )
-		{
-			const t = (y-P.y)/(Q.y-P.y);
-			return { x : (1.0-t)*P.x + t*Q.x, y : y };
-		}
+    def numAspects(self):
+        return self.ttd.num_aspects
+    
+    def getAspectTransform( idx ):
+        # return [ ...self.aspects[ idx ] ]
+        return self.aspects[ idx ]   # todo: this used to use the ... js operator
 
-		function* doFill( A, B, C, D, do_top )
-		{
-			let x1 = A.x;
-			const dx1 = (D.x-A.x)/(D.y-A.y);
-			let x2 = B.x;
-			const dx2 = (C.x-B.x)/(C.y-B.y);
-			const ymin = A.y;
-			let ymax = C.y;
+    def getT1(self):
+        return self.t1  # todo: this used to use the ... js operator
 
-			if( do_top ) {
-				ymax = ymax + 1.0;
-			}
+    def getT2(self):
+        return self.t2  # todo: this used to use the ... js operator
 
-			let y = Math.floor( ymin );
-			if( last_y ) {
-				y = Math.max( last_y, y );
-			}
+    def fillRegionBounds( self, xmin, ymin, xmax, ymax ):
+        yield self.fillRegionQuad(
+            { x : xmin, y : ymin },
+            { x : xmax, y : ymin },
+            { x : xmax, y : ymax },
+            { x : xmin, y : ymax } )
 
-			while( y < ymax ) {
-				const yi = Math.trunc( y );
-				let x = Math.floor( x1 );
-				while( x < (x2 + 1e-7) ) {
-					const xi = Math.trunc( x );
+    def fillRegionQuad( self, A, B, C, D ):
+        t1 = self.getT1()
+        t2 = self.getT2()
+        ttd = self.ttd
+        aspects = self.aspects
 
-					for( let asp = 0; asp < ttd.num_aspects; ++asp ) {
-						let M = aspects[ asp ].slice( 0 );
-						M[2] += xi*t1.x + yi*t2.x;
-						M[5] += xi*t1.y + yi*t2.y;
+        last_y = None  # todo
 
-						yield {
-							T : M,
-							t1 : xi,
-							t2 : yi,
-							aspect : asp
-						};
-					}
+        def bc( M, p ):
+            return { 
+                x : M[0]*p.x + M[1]*p.y,
+                y : M[2]*p.x + M[3]*p.y }
 
-					x += 1.0;
-				}
-				x1 += dx1;
-				x2 += dx2;
-				y += 1.0;
-			}
+        def sampleAtHeight( P, Q, y ):
+            t = (y-P.y)/(Q.y-P.y)
+            return { x : (1.0-t)*P.x + t*Q.x, y : y }
 
-			last_y = y;
-		}
+        def doFill( A, B, C, D, do_top ):
+            x1 = A.x
+            dx1 = (D.x-A.x)/(D.y-A.y)
+            x2 = B.x
+            dx2 = (C.x-B.x)/(C.y-B.y)
+            ymin = A.y
+            ymax = C.y
 
-		function* fillFixX( A, B, C, D, do_top )
-		{
-			if( A.x > B.x ) {
-				yield* doFill( B, A, D, C, do_top );
-			} else {
-				yield* doFill( A, B, C, D, do_top );
-			}
-		}
-			
-		function* fillFixY( A, B, C, D, do_top ) 
-		{
-			if( A.y > C.y ) {
-				yield* doFill( C, D, A, B, do_top );
-			} else {
-				yield* doFill( A, B, C, D, do_top );
-			}
-		}
+            if do_top:
+                ymax = ymax + 1.0
 
-		const det = 1.0 / (t1.x*t2.y-t2.x*t1.y);
-		const Mbc = [ t2.y * det, -t2.x * det, -t1.y * det, t1.x * det ];
+            y = math.floor( ymin )
+            if last_y:
+                y = max( last_y, y )
+            
 
-		let pts = [ bc( Mbc, A ), bc( Mbc, B ), bc( Mbc, C ), bc( Mbc, D ) ];
+            while y < ymax:
+                yi = math.trunc( y )
+                x = math.floor( x1 )
+                while x < (x2 + 1e-7):
+                    xi = math.trunc( x )
 
-		if( det < 0.0 ) {
-			let tmp = pts[1];
-			pts[1] = pts[3];
-			pts[3] = tmp;
-		}
+                    for asp in range(ttd.num_aspects):
+                        M = aspects[ asp ].slice( 0 )
+                        M[2] += xi*t1.x + yi*t2.x
+                        M[5] += xi*t1.y + yi*t2.y
 
-		if( Math.abs( pts[0].y - pts[1].y ) < 1e-7 ) {
-			yield* fillFixY( pts[0], pts[1], pts[2], pts[3], true );
-		} else if( Math.abs( pts[1].y - pts[2].y ) < 1e-7 ) {
-			yield* fillFixY( pts[1], pts[2], pts[3], pts[0], true );
-		} else {
-			let lowest = 0;
-			for( let idx = 1; idx < 4; ++idx ) {
-				if( pts[idx].y < pts[lowest].y ) {
-					lowest = idx;
-				}
-			}
+                        yield {
+                            T : M,
+                            t1 : xi,
+                            t2 : yi,
+                            aspect : asp
+                        }
 
-			let bottom = pts[lowest];
-			let left = pts[(lowest+1)%4];
-			let top = pts[(lowest+2)%4];
-			let right = pts[(lowest+3)%4];
+                    x += 1.0
+                
+                x1 += dx1
+                x2 += dx2
+                y += 1.0
 
-			if( left.x > right.x ) {
-				let tmp = left;
-				left = right;
-				right = tmp;
-			}
+            last_y = y
 
-			if( left.y < right.y ) {
-				const r1 = sampleAtHeight( bottom, right, left.y );
-				const l2 = sampleAtHeight( left, top, right.y );
-				yield* fillFixX( bottom, bottom, r1, left, false );
-				yield* fillFixX( left, r1, right, l2, false );
-				yield* fillFixX( l2, right, top, top, true );
-			} else {
-				const l1 = sampleAtHeight( bottom, left, right.y );
-				const r2 = sampleAtHeight( right, top, left.y );
-				yield* fillFixX( bottom, bottom, right, l1, false );
-				yield* fillFixX( l1, right, r2, left, false );
-				yield* fillFixX( left, r2, top, top, true );
-			}
-		}
-	}
-	
-	getColour( a, b, asp )
-	{
-		const clrg = this.ttd.colouring;
-		const nc = clrg[18];
+        def fillFixX( A, B, C, D, do_top ):
+            if A.x > B.x:
+                yield doFill( B, A, D, C, do_top )
+            else:
+                yield doFill( A, B, C, D, do_top )
+            
+        def fillFixY( A, B, C, D, do_top ):
+            if A.y > C.y:
+                yield doFill( C, D, A, B, do_top )
+            else:
+                yield doFill( A, B, C, D, do_top )
 
-		let mt1 = a % nc;
-		if( mt1 < 0 ) {
-			mt1 += nc;
-		}
-		let mt2 = b % nc;
-		if( mt2 < 0 ) {
-			mt2 += nc;
-		}
-		let col = clrg[asp];
+        det = 1.0 / (t1.x*t2.y-t2.x*t1.y)
+        Mbc = [ t2.y * det, -t2.x * det, -t1.y * det, t1.x * det ]
 
-		for( let idx = 0; idx < mt1; ++idx ) {
-			col = clrg[12+col];
-		}
-		for( let idx = 0; idx < mt2; ++idx ) {
-			col = clrg[15+col];
-		}
+        pts = [ bc( Mbc, A ), bc( Mbc, B ), bc( Mbc, C ), bc( Mbc, D ) ]
 
-		return col;
-	}
-};
+        if det < 0.0:
+            tmp = pts[1]
+            pts[1] = pts[3]
+            pts[3] = tmp
 
-export 
-{
-	EdgeShape,
+        if abs( pts[0].y - pts[1].y ) < 1e-7:
+            yield fillFixY( pts[0], pts[1], pts[2], pts[3], true )
+        elif abs( pts[1].y - pts[2].y ) < 1e-7:
+            yield fillFixY( pts[1], pts[2], pts[3], pts[0], true )
+        else:
+            lowest = 0
+            for idx in range(1, 4):
+                if pts[idx].y < pts[lowest].y:
+                    lowest = idx
 
-	numTypes,
-	tilingTypes,
+            bottom = pts[lowest]
+            left = pts[(lowest+1)%4]
+            top = pts[(lowest+2)%4]
+            right = pts[(lowest+3)%4]
 
-	makePoint,
-	makeMatrix,
-	mul,
-	matchSeg,
+            if left.x > right.x:
+                # swap
+                left, right = right, left
 
-	IsohedralTiling
-};
+            if left.y < right.y:
+                r1 = sampleAtHeight( bottom, right, left.y )
+                l2 = sampleAtHeight( left, top, right.y )
+                yield fillFixX( bottom, bottom, r1, left, false )
+                yield fillFixX( left, r1, right, l2, false )
+                yield fillFixX( l2, right, top, top, true )
+            else:
+                l1 = sampleAtHeight( bottom, left, right.y )
+                r2 = sampleAtHeight( right, top, left.y )
+                yield fillFixX( bottom, bottom, right, l1, false )
+                yield fillFixX( l1, right, r2, left, false )
+                yield fillFixX( left, r2, top, top, true )
+
+    def getColour( self, a, b, asp ):
+
+        clrg = self.ttd.colouring
+        nc = clrg[18]
+
+        mt1 = a % nc
+        if mt1 < 0:
+            mt1 += nc
+
+        mt2 = b % nc
+        if mt2 < 0:
+            mt2 += nc
+
+        col = clrg[asp]
+
+        for idx in range(mt1):
+            col = clrg[12+col]
+
+        for idx in range(mt2):
+            col = clrg[15+col]
+
+        return col
+
+# todo:
+# export 
+# {
+#     EdgeShape,
+
+#     numTypes,
+#     tilingTypes,
+
+#     makePoint,
+#     makeMatrix,
+#     mul,
+#     matchSeg,
+
+#     IsohedralTiling
+# }
+
