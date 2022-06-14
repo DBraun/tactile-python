@@ -1,6 +1,8 @@
-from preamble import EdgeShape, mul, matchSeg
-from tiling_data import TilingTypeData
+from preamble import EdgeShape, mul, matchSeg, numTypes
+from tiling_data import TilingTypeData, tilingTypes
+
 import math
+
 
 def makePoint( coeffs, offs, params ):
 
@@ -9,7 +11,7 @@ def makePoint( coeffs, offs, params ):
     # todo: use numpy for speed
     for i, param in enumerge(params):
         x += coeffs[offs+i] * params[i]
-        y += coeffs[offs+params.length+i] * params[i]
+        y += coeffs[offs+len(params)+i] * params[i]
 
     ret = { x : 0.0, y : 0.0 }
 
@@ -30,6 +32,7 @@ def makeMatrix( coeffs, offs, params ):
 
     return ret
 
+# todo: make these non-global
 M_orients = [
     [1.0, 0.0, 0.0,    0.0, 1.0, 0.0],   # IDENTITY
     [-1.0, 0.0, 1.0,   0.0, -1.0, 0.0],  # ROT
@@ -57,7 +60,7 @@ class IsohedralTiling:
 
         self.tiling_type = tp
         self.ttd = TilingTypeData[ tp ]
-        self.parameters = self.ttd.default_params.slice( 0 )
+        self.parameters = self.ttd.default_params
         self.parameters.append( 1.0 )
         self.recompute()
 
@@ -99,17 +102,17 @@ class IsohedralTiling:
     def getTilingType(self):
         return self.tiling_type
 
-    def numParameters():
+    def numParameters(self):
         return self.ttd.num_params
 
     def setParameters(self, arr ):
-        if( arr.length == (self.parameters.length-1) ):
-            self.parameters = arr.slice( 0 )
+        if len(arr) == (len(self.parameters)-1):
+            self.parameters = arr
             self.parameters.append( 1.0 )
             self.recompute()
 
     def getParameters(self):
-        return self.parameters.slice( 0, -1 )
+        return self.parameters[:-1]
 
     def numEdgeShapes(self):
         return self.ttd.num_edge_shapes
@@ -164,7 +167,7 @@ class IsohedralTiling:
     def numVertices(self):
         return self.ttd.num_vertices
 
-    def getVertex(self, idx ):
+    def getVertex(self, idx):
         # return { ...self.verts[ idx ] }
         return self.verts[ idx ]   # todo: this used to use the ... js operator
 
@@ -175,7 +178,7 @@ class IsohedralTiling:
     def numAspects(self):
         return self.ttd.num_aspects
     
-    def getAspectTransform( idx ):
+    def getAspectTransform(self, idx):
         # return [ ...self.aspects[ idx ] ]
         return self.aspects[ idx ]   # todo: this used to use the ... js operator
 
@@ -185,14 +188,14 @@ class IsohedralTiling:
     def getT2(self):
         return self.t2  # todo: this used to use the ... js operator
 
-    def fillRegionBounds( self, xmin, ymin, xmax, ymax ):
+    def fillRegionBounds(self, xmin, ymin, xmax, ymax):
         yield self.fillRegionQuad(
             { x : xmin, y : ymin },
             { x : xmax, y : ymin },
             { x : xmax, y : ymax },
             { x : xmin, y : ymax } )
 
-    def fillRegionQuad( self, A, B, C, D ):
+    def fillRegionQuad(self, A, B, C, D):
         t1 = self.getT1()
         t2 = self.getT2()
         ttd = self.ttd
@@ -205,11 +208,11 @@ class IsohedralTiling:
                 x : M[0]*p.x + M[1]*p.y,
                 y : M[2]*p.x + M[3]*p.y }
 
-        def sampleAtHeight( P, Q, y ):
+        def sampleAtHeight(P, Q, y):
             t = (y-P.y)/(Q.y-P.y)
             return { x : (1.0-t)*P.x + t*Q.x, y : y }
 
-        def doFill( A, B, C, D, do_top ):
+        def doFill(A, B, C, D, do_top):
             x1 = A.x
             dx1 = (D.x-A.x)/(D.y-A.y)
             x2 = B.x
@@ -232,7 +235,7 @@ class IsohedralTiling:
                     xi = math.trunc( x )
 
                     for asp in range(ttd.num_aspects):
-                        M = aspects[ asp ].slice( 0 )
+                        M = aspects[ asp ]
                         M[2] += xi*t1.x + yi*t2.x
                         M[5] += xi*t1.y + yi*t2.y
 
@@ -251,13 +254,13 @@ class IsohedralTiling:
 
             last_y = y
 
-        def fillFixX( A, B, C, D, do_top ):
+        def fillFixX(A, B, C, D, do_top):
             if A.x > B.x:
                 yield doFill( B, A, D, C, do_top )
             else:
                 yield doFill( A, B, C, D, do_top )
             
-        def fillFixY( A, B, C, D, do_top ):
+        def fillFixY(A, B, C, D, do_top):
             if A.y > C.y:
                 yield doFill( C, D, A, B, do_top )
             else:
@@ -305,7 +308,7 @@ class IsohedralTiling:
                 yield fillFixX( l1, right, r2, left, false )
                 yield fillFixX( left, r2, top, top, true )
 
-    def getColour( self, a, b, asp ):
+    def getColour(self, a, b, asp):
 
         clrg = self.ttd.colouring
         nc = clrg[18]
@@ -327,20 +330,3 @@ class IsohedralTiling:
             col = clrg[15+col]
 
         return col
-
-# todo:
-# export 
-# {
-#     EdgeShape,
-
-#     numTypes,
-#     tilingTypes,
-
-#     makePoint,
-#     makeMatrix,
-#     mul,
-#     matchSeg,
-
-#     IsohedralTiling
-# }
-

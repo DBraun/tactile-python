@@ -12,7 +12,7 @@ class EdgeShape(Enum):
     S = 10003
     I = 10004
 
-numTypes = 81;
+numTypes = 81
 
 
 def mul( A, B ):

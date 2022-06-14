@@ -1,4 +1,3 @@
-from enum import Enum
 from preamble import EdgeShape
 
 tilingTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -7,7 +6,7 @@ tilingTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
     61, 62, 64, 66, 67, 68, 69, 71, 72, 73, 74, 76, 77, 78, 79, 81, 82, 83, 84,
     85, 86, 88, 90, 91, 93]
 
-class TilingTypeData():
+class TilingTypeData:
 
     es_00 = [ EdgeShape.J, EdgeShape.J, EdgeShape.J ]
     es_01 = [ EdgeShape.S, EdgeShape.J, EdgeShape.S, EdgeShape.S, EdgeShape.S ]
