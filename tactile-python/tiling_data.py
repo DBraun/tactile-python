@@ -1,10 +1,29 @@
 from preamble import EdgeShape
+from collections import namedtuple
 
 tilingTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
     20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39,
     40, 41, 42, 43, 44, 45, 46, 47, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
     61, 62, 64, 66, 67, 68, 69, 71, 72, 73, 74, 76, 77, 78, 79, 81, 82, 83, 84,
     85, 86, 88, 90, 91, 93]
+
+ 
+Tile = namedtuple('Tile',
+    [
+            "num_params",
+            "num_aspects",
+            "num_vertices",
+            "num_edge_shapes",
+            "edge_shapes",
+            "edge_orientations",
+            "edge_shape_ids",
+            "default_params",
+            "vertex_coeffs",
+            "translation_coeffs",
+            "aspect_coeffs",
+            "colouring"
+    ]
+    )
 
 class TilingTypeData:
 
@@ -1807,6 +1826,9 @@ class TilingTypeData:
 
     ]
 
-    @classmethod
-    def __getitem__(key):
-        return _data[key]
+    _data = [Tile(**datum) if datum is not None else None for datum in _data]    
+
+    @staticmethod
+    def get_data(key):
+
+        return TilingTypeData._data[key]

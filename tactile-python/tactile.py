@@ -9,7 +9,7 @@ def makePoint( coeffs, offs, params ):
     x, y = 0, 0
 
     # todo: use numpy for speed
-    for i, param in enumerge(params):
+    for i, param in enumerate(params):
         x += coeffs[offs+i] * params[i]
         y += coeffs[offs+len(params)+i] * params[i]
 
@@ -25,7 +25,7 @@ def makeMatrix( coeffs, offs, params ):
         for col in range(3):
             val = 0.
 
-            for idx, param in enumerage(params):
+            for idx, param in enumerate(params):
                 val += coeffs[offs+idx] * param
             ret.append( val )
             offs += len(params)
@@ -59,7 +59,7 @@ class IsohedralTiling:
     def reset(self, tp):
 
         self.tiling_type = tp
-        self.ttd = TilingTypeData[ tp ]
+        self.ttd = TilingTypeData.get_data(tp)
         self.parameters = self.ttd.default_params
         self.parameters.append( 1.0 )
         self.recompute()
