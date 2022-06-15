@@ -60,7 +60,7 @@ class IsohedralTiling:
 
         self.tiling_type = tp
         self.ttd = TilingTypeData.get_data(tp)
-        self.parameters = self.ttd.default_params
+        self.parameters = self.ttd.default_params[:]  # copy!
         self.parameters.append( 1.0 )
         self.recompute()
 
@@ -236,7 +236,7 @@ class IsohedralTiling:
                     xi = math.trunc( x )
 
                     for asp in range(ttd.num_aspects):
-                        M = aspects[ asp ]
+                        M = aspects[ asp ][:] # important to copy
                         M[2] += xi*t1.x + yi*t2.x
                         M[5] += xi*t1.y + yi*t2.y
 

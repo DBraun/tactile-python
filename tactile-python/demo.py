@@ -1,22 +1,20 @@
 import random
 import math
 
-import numpy as np
-
 from p5 import *
 
-import tactile
-from tactile import EdgeShape, mul, Point, Shape
+from tactile import IsohedralTiling, tilingTypes, EdgeShape, mul, Point, Shape
+
 
 def makeRandomTiling():
     # Construct a tiling
-    tp = tactile.tilingTypes[ int(math.floor( 81 * random.random() )) ]
-    tiling = tactile.IsohedralTiling( tp )
+    tp = tilingTypes[ int(math.floor( 81 * random.random() )) ]
+    tiling = IsohedralTiling( tp )
 
     # Randomize the tiling vertex parameters
     ps = tiling.getParameters()
     for i in range(len(ps)):
-        ps[i] += random.random() * 0.1 - 0.05
+        ps[i] += (random.random()-.5)*0.2
     tiling.setParameters( ps )
 
     # Make some random edge shapes.  Note that here, we sidestep the 
@@ -64,7 +62,7 @@ def drawRandomTiling():
     # ctx.strokeStyle = '#000'
 
     # Define a world-to-screen transformation matrix that scales by 50x.
-    scale = 1
+    scale = 50
     ST = [ scale, 0.0, 0.0, 
                  0.0, scale, 0.0 ]
 
@@ -89,33 +87,21 @@ def drawRandomTiling():
 
             if si.rev:
                 seg.reverse()
-            print(seg)
+            # print(seg)
 
             if start:
                 start = False
                 vertex(seg[0].x, seg[0].y )
-                # ctx.moveTo( seg[0].x, seg[0].y )
-
             if len(seg) == 2:
-                # ctx.lineTo( seg[1].x, seg[1].y )
                 vertex(seg[1].x, seg[1].y )
             else:
                 bezier_vertex(
                     seg[1].x, seg[1].y, 
                     seg[2].x, seg[2].y, 
                     seg[3].x, seg[3].y)
-                # ctx.bezierCurveTo( 
-                #   seg[1].x, seg[1].y, 
-                #   seg[2].x, seg[2].y, 
-                #   seg[3].x, seg[3].y )
 
         end_shape()
-        # fill()
-        # ctx.stroke()
 
-
-# tiling = tactile.IsohedralTiling( tactile.tilingTypes[ 0 ] )
-# drawRandomTiling()
 
 def setup():
     size(1000, 1000)
@@ -123,18 +109,12 @@ def setup():
 
 
 def draw():
-    # print('draw')
     # no_stroke()
-    stroke_weight(5)
+    stroke_weight(1)
     stroke(255,0,0)
-    # background(204)
+    background(0)
     drawRandomTiling()
 
-    # begin_shape()
-    # vertex(200, 200)
-    # vertex(200, 500 )
-    # vertex(500, 200 )
-    # end_shape()
 
 if __name__ == '__main__':
 
