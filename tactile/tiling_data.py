@@ -20,7 +20,7 @@ Tile = namedtuple('Tile',
             "vertex_coeffs",
             "translation_coeffs",
             "aspect_coeffs",
-            "colouring"
+            "coloring"
     ]
     )
 
@@ -504,7 +504,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_00,
             "translation_coeffs": tc_00,
             "aspect_coeffs": ac_00,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH02
@@ -520,7 +520,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_01,
             "translation_coeffs": tc_01,
             "aspect_coeffs": ac_01,
-            "colouring": c_01
+            "coloring": c_01
         },
 
         # IH03
@@ -536,7 +536,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_02,
             "translation_coeffs": tc_02,
             "aspect_coeffs": ac_02,
-            "colouring": c_02
+            "coloring": c_02
         },
 
         # IH04
@@ -552,7 +552,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_03,
             "translation_coeffs": tc_03,
             "aspect_coeffs": ac_03,
-            "colouring": c_02
+            "coloring": c_02
         },
 
         # IH05
@@ -568,7 +568,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_04,
             "translation_coeffs": tc_04,
             "aspect_coeffs": ac_04,
-            "colouring": c_03
+            "coloring": c_03
         },
 
         # IH06
@@ -584,7 +584,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_05,
             "translation_coeffs": tc_05,
             "aspect_coeffs": ac_05,
-            "colouring": c_04
+            "coloring": c_04
         },
 
         # IH07
@@ -600,7 +600,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_06,
             "translation_coeffs": tc_06,
             "aspect_coeffs": ac_06,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH08
@@ -616,7 +616,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_00,
             "translation_coeffs": tc_00,
             "aspect_coeffs": ac_00,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH09
@@ -632,7 +632,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_07,
             "translation_coeffs": tc_07,
             "aspect_coeffs": ac_07,
-            "colouring": c_06
+            "coloring": c_06
         },
 
         # IH10
@@ -648,7 +648,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_08,
             "translation_coeffs": tc_08,
             "aspect_coeffs": ac_08,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH11
@@ -664,7 +664,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_08,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_08,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH12
@@ -680,7 +680,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_09,
             "translation_coeffs": tc_10,
             "aspect_coeffs": ac_09,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH13
@@ -696,7 +696,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_10,
             "translation_coeffs": tc_11,
             "aspect_coeffs": ac_10,
-            "colouring": c_06
+            "coloring": c_06
         },
 
         # IH14
@@ -712,7 +712,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_11,
             "translation_coeffs": tc_12,
             "aspect_coeffs": ac_09,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH15
@@ -728,7 +728,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_12,
             "translation_coeffs": tc_13,
             "aspect_coeffs": ac_11,
-            "colouring": c_06
+            "coloring": c_06
         },
 
         # IH16
@@ -744,7 +744,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_13,
             "translation_coeffs": tc_14,
             "aspect_coeffs": ac_12,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH17
@@ -760,7 +760,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_09,
             "translation_coeffs": tc_10,
             "aspect_coeffs": ac_09,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH18
@@ -776,7 +776,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_08,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_08,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH19 is undefined
@@ -795,7 +795,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_08,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_08,
-            "colouring": c_00
+            "coloring": c_00
         },
 
         # IH21
@@ -811,7 +811,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_14,
             "translation_coeffs": tc_15,
             "aspect_coeffs": ac_13,
-            "colouring": c_07
+            "coloring": c_07
         },
 
         # IH22
@@ -827,7 +827,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_15,
             "translation_coeffs": tc_16,
             "aspect_coeffs": ac_14,
-            "colouring": c_06
+            "coloring": c_06
         },
 
         # IH23
@@ -843,7 +843,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_16,
             "translation_coeffs": tc_17,
             "aspect_coeffs": ac_15,
-            "colouring": c_08
+            "coloring": c_08
         },
 
         # IH24
@@ -859,7 +859,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_16,
             "translation_coeffs": tc_18,
             "aspect_coeffs": ac_16,
-            "colouring": c_09
+            "coloring": c_09
         },
 
         # IH25
@@ -875,7 +875,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_15,
             "translation_coeffs": tc_19,
             "aspect_coeffs": ac_17,
-            "colouring": c_10
+            "coloring": c_10
         },
 
         # IH26
@@ -891,7 +891,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_17,
             "translation_coeffs": tc_20,
             "aspect_coeffs": ac_18,
-            "colouring": c_01
+            "coloring": c_01
         },
 
         # IH27
@@ -907,7 +907,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_18,
             "translation_coeffs": tc_21,
             "aspect_coeffs": ac_19,
-            "colouring": c_11
+            "coloring": c_11
         },
 
         # IH28
@@ -923,7 +923,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_19,
             "translation_coeffs": tc_22,
             "aspect_coeffs": ac_20,
-            "colouring": c_12
+            "coloring": c_12
         },
 
         # IH29
@@ -939,7 +939,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_20,
             "translation_coeffs": tc_23,
             "aspect_coeffs": ac_21,
-            "colouring": c_04
+            "coloring": c_04
         },
 
         # IH30
@@ -955,7 +955,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_21,
             "translation_coeffs": tc_24,
             "aspect_coeffs": ac_22,
-            "colouring": c_13
+            "coloring": c_13
         },
 
         # IH31
@@ -971,7 +971,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_22,
             "translation_coeffs": tc_25,
             "aspect_coeffs": ac_23,
-            "colouring": c_14
+            "coloring": c_14
         },
 
         # IH32
@@ -987,7 +987,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_22,
             "translation_coeffs": tc_26,
             "aspect_coeffs": ac_24,
-            "colouring": c_15
+            "coloring": c_15
         },
 
         # IH33
@@ -1003,7 +1003,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_23,
             "translation_coeffs": tc_08,
             "aspect_coeffs": ac_25,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH34
@@ -1019,7 +1019,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_23,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_26,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH35 is undefined
@@ -1038,7 +1038,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_23,
             "translation_coeffs": tc_08,
             "aspect_coeffs": ac_27,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH37
@@ -1054,7 +1054,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_23,
             "translation_coeffs": tc_08,
             "aspect_coeffs": ac_28,
-            "colouring": c_05
+            "coloring": c_05
         },
 
         # IH38
@@ -1070,7 +1070,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_24,
             "translation_coeffs": tc_27,
             "aspect_coeffs": ac_29,
-            "colouring": c_15
+            "coloring": c_15
         },
 
         # IH39
@@ -1086,7 +1086,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_24,
             "translation_coeffs": tc_28,
             "aspect_coeffs": ac_30,
-            "colouring": c_16
+            "coloring": c_16
         },
 
         # IH40
@@ -1102,7 +1102,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_24,
             "translation_coeffs": tc_29,
             "aspect_coeffs": ac_31,
-            "colouring": c_17
+            "coloring": c_17
         },
 
         # IH41
@@ -1118,7 +1118,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_30,
             "aspect_coeffs": ac_09,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH42
@@ -1134,7 +1134,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_31,
             "aspect_coeffs": ac_32,
-            "colouring": c_19
+            "coloring": c_19
         },
 
         # IH43
@@ -1150,7 +1150,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_31,
             "aspect_coeffs": ac_33,
-            "colouring": c_19
+            "coloring": c_19
         },
 
         # IH44
@@ -1166,7 +1166,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_26,
             "translation_coeffs": tc_32,
             "aspect_coeffs": ac_34,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH45
@@ -1182,7 +1182,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_27,
             "translation_coeffs": tc_33,
             "aspect_coeffs": ac_35,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH46
@@ -1198,7 +1198,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_28,
             "translation_coeffs": tc_34,
             "aspect_coeffs": ac_36,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH47
@@ -1214,7 +1214,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_35,
             "aspect_coeffs": ac_37,
-            "colouring": c_19
+            "coloring": c_19
         },
 
         # IH48 is undefined
@@ -1233,7 +1233,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_29,
             "translation_coeffs": tc_36,
             "aspect_coeffs": ac_38,
-            "colouring": c_21
+            "coloring": c_21
         },
 
         # IH50
@@ -1249,7 +1249,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_37,
             "aspect_coeffs": ac_39,
-            "colouring": c_22
+            "coloring": c_22
         },
 
         # IH51
@@ -1265,7 +1265,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_30,
             "translation_coeffs": tc_38,
             "aspect_coeffs": ac_40,
-            "colouring": c_21
+            "coloring": c_21
         },
 
         # IH52
@@ -1281,7 +1281,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_31,
             "translation_coeffs": tc_39,
             "aspect_coeffs": ac_41,
-            "colouring": c_23
+            "coloring": c_23
         },
 
         # IH53
@@ -1297,7 +1297,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_32,
             "translation_coeffs": tc_40,
             "aspect_coeffs": ac_42,
-            "colouring": c_21
+            "coloring": c_21
         },
 
         # IH54
@@ -1313,7 +1313,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_33,
             "translation_coeffs": tc_41,
             "aspect_coeffs": ac_43,
-            "colouring": c_22
+            "coloring": c_22
         },
 
         # IH55
@@ -1329,7 +1329,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_42,
             "aspect_coeffs": ac_44,
-            "colouring": c_24
+            "coloring": c_24
         },
 
         # IH56
@@ -1345,7 +1345,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_35,
             "translation_coeffs": tc_43,
             "aspect_coeffs": ac_45,
-            "colouring": c_25
+            "coloring": c_25
         },
 
         # IH57
@@ -1361,7 +1361,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_30,
             "aspect_coeffs": ac_09,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH58
@@ -1377,7 +1377,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_25,
             "translation_coeffs": tc_31,
             "aspect_coeffs": ac_32,
-            "colouring": c_19
+            "coloring": c_19
         },
 
         # IH59
@@ -1393,7 +1393,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_36,
             "translation_coeffs": tc_44,
             "aspect_coeffs": ac_46,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH60 is undefined
@@ -1412,7 +1412,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_45,
             "aspect_coeffs": ac_47,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH62
@@ -1428,7 +1428,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_46,
             "aspect_coeffs": ac_08,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH63 is undefined
@@ -1447,7 +1447,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_31,
             "translation_coeffs": tc_47,
             "aspect_coeffs": ac_48,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH65 is undefined
@@ -1466,7 +1466,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_31,
             "translation_coeffs": tc_48,
             "aspect_coeffs": ac_49,
-            "colouring": c_19
+            "coloring": c_19
         },
 
         # IH67
@@ -1482,7 +1482,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_27,
             "translation_coeffs": tc_49,
             "aspect_coeffs": ac_50,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH68
@@ -1498,7 +1498,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_36,
             "translation_coeffs": tc_50,
             "aspect_coeffs": ac_48,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH69
@@ -1514,7 +1514,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_26,
             "translation_coeffs": tc_32,
             "aspect_coeffs": ac_51,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH70 is undefined
@@ -1533,7 +1533,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_42,
             "aspect_coeffs": ac_52,
-            "colouring": c_24
+            "coloring": c_24
         },
 
         # IH72
@@ -1549,7 +1549,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_31,
             "translation_coeffs": tc_47,
             "aspect_coeffs": ac_48,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH73
@@ -1565,7 +1565,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_45,
             "aspect_coeffs": ac_47,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH74
@@ -1581,7 +1581,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_36,
             "translation_coeffs": tc_50,
             "aspect_coeffs": ac_48,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH75 is undefined
@@ -1600,7 +1600,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_34,
             "translation_coeffs": tc_46,
             "aspect_coeffs": ac_08,
-            "colouring": c_18
+            "coloring": c_18
         },
 
         # IH77
@@ -1616,7 +1616,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_37,
             "translation_coeffs": tc_51,
             "aspect_coeffs": ac_53,
-            "colouring": c_26
+            "coloring": c_26
         },
 
         # IH78
@@ -1632,7 +1632,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_38,
             "translation_coeffs": tc_52,
             "aspect_coeffs": ac_54,
-            "colouring": c_22
+            "coloring": c_22
         },
 
         # IH79
@@ -1648,7 +1648,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_39,
             "translation_coeffs": tc_53,
             "aspect_coeffs": ac_55,
-            "colouring": c_27
+            "coloring": c_27
         },
 
         # IH80 is undefined
@@ -1667,7 +1667,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_39,
             "translation_coeffs": tc_54,
             "aspect_coeffs": ac_56,
-            "colouring": c_25
+            "coloring": c_25
         },
 
         # IH82
@@ -1683,7 +1683,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_39,
             "translation_coeffs": tc_55,
             "aspect_coeffs": ac_57,
-            "colouring": c_27
+            "coloring": c_27
         },
 
         # IH83
@@ -1699,7 +1699,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_40,
             "translation_coeffs": tc_56,
             "aspect_coeffs": ac_58,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH84
@@ -1715,7 +1715,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_41,
             "translation_coeffs": tc_57,
             "aspect_coeffs": ac_59,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH85
@@ -1731,7 +1731,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_41,
             "translation_coeffs": tc_58,
             "aspect_coeffs": ac_60,
-            "colouring": c_21
+            "coloring": c_21
         },
 
         # IH86
@@ -1747,7 +1747,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_40,
             "translation_coeffs": tc_59,
             "aspect_coeffs": ac_61,
-            "colouring": c_21
+            "coloring": c_21
         },
 
         # IH87 is undefined
@@ -1766,7 +1766,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_42,
             "translation_coeffs": tc_60,
             "aspect_coeffs": ac_62,
-            "colouring": c_28
+            "coloring": c_28
         },
 
         # IH89 is undefined
@@ -1785,7 +1785,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_42,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_63,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH91
@@ -1801,7 +1801,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_40,
             "translation_coeffs": tc_61,
             "aspect_coeffs": ac_64,
-            "colouring": c_20
+            "coloring": c_20
         },
 
         # IH92 is undefined
@@ -1820,7 +1820,7 @@ class TilingTypeData:
             "vertex_coeffs": tvc_42,
             "translation_coeffs": tc_09,
             "aspect_coeffs": ac_63,
-            "colouring": c_20
+            "coloring": c_20
         }
 
     ]

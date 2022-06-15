@@ -313,9 +313,9 @@ class IsohedralTiling:
                 yield from fillFixX( l1, right, r2, left, False )
                 yield from fillFixX( left, r2, top, top, True )
 
-    def getColour(self, a, b, asp):
+    def getColor(self, a, b, asp):
 
-        clrg = self.ttd.colouring
+        clrg = self.ttd.coloring
         nc = clrg[18]
 
         mt1 = a % nc

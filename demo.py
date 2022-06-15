@@ -50,7 +50,7 @@ def drawRandomTiling():
 
     tiling, edges = makeRandomTiling()
 
-    # Make some random colours.
+    # Make some random colors.
     cols = []
     for i in range(3):
         cols.append([
@@ -68,8 +68,7 @@ def drawRandomTiling():
 
     for i in tiling.fillRegionBounds( -2, -2, 12, 12 ):
         T = mul( ST, i.T )
-        fill(0,255,0)
-        # fill(*cols[ tiling.getColour( i.t1, i.t2, i.aspect ) ])
+        fill(*cols[ tiling.getColor( i.t1, i.t2, i.aspect ) ])
 
         start = True
         begin_shape()
@@ -109,9 +108,9 @@ def setup():
 
 
 def draw():
-    # no_stroke()
-    stroke_weight(1)
-    stroke(255,0,0)
+    # stroke_weight(1)
+    # stroke(255,0,0)
+    no_stroke()
     background(0)
     drawRandomTiling()
 
