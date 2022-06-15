@@ -10,12 +10,12 @@ def makePoint( coeffs, offs, params ):
 
     # todo: use numpy for speed
     for i, param in enumerate(params):
-        x += coeffs[offs+i] * params[i]
-        y += coeffs[offs+len(params)+i] * params[i]
+        x += coeffs[offs+i] * param
+        y += coeffs[offs+len(params)+i] * param
 
-    ret = Point(**{ "x" : x, "y" : y })
+    point = Point(**{ "x" : x, "y" : y })
 
-    return ret
+    return point
 
 def makeMatrix( coeffs, offs, params ):
     ret = []
@@ -107,8 +107,7 @@ class IsohedralTiling:
 
     def setParameters(self, arr ):
         if len(arr) == (len(self.parameters)-1):
-            self.parameters = arr
-            self.parameters.append( 1.0 )
+            self.parameters = arr + [1.]
             self.recompute()
 
     def getParameters(self):
