@@ -1,5 +1,5 @@
 from .preamble import EdgeShape, mul, matchSeg, numTypes, Shape, Point
-from .tiling_data import TilingTypeData, tilingTypes
+from .tiling_data import TilingTypeData, tiling_types
 
 import math
 

@@ -3,12 +3,12 @@ import math
 
 from p5 import *
 
-from tactile import IsohedralTiling, tilingTypes, EdgeShape, mul, Point, Shape
+from tactile import IsohedralTiling, tiling_types, EdgeShape, mul, Point
 
 
 def makeRandomTiling():
     # Construct a tiling
-    tp = tilingTypes[ int(math.floor( 81 * random.random() )) ]
+    tp = tiling_types[ int(math.floor( 81 * random.random() )) ]
     tiling = IsohedralTiling( tp )
 
     # Randomize the tiling vertex parameters
@@ -45,24 +45,18 @@ def makeRandomTiling():
 
 def drawRandomTiling():
         
-    # var canvas = document.getElementById( 'canvas' )
-    # var ctx = canvas.getContext( '2d' )
-
     tiling, edges = makeRandomTiling()
 
     # Make some random colors.
     cols = []
     for i in range(3):
         cols.append([
-            int(math.floor( random.random() * 255.0 )),
-            int(math.floor( random.random() * 255.0 )),
-            int(math.floor( random.random() * 255.0 ))])
+            int(math.floor( random.random() * 255 )),
+            int(math.floor( random.random() * 255 )),
+            int(math.floor( random.random() * 255 ))])
 
-    # ctx.lineWidth = 1.0
-    # ctx.strokeStyle = '#000'
-
-    # Define a world-to-screen transformation matrix that scales by 50x.
-    scale = 50
+    # Define a world-to-screen transformation matrix that scales by 100x.
+    scale = 100
     ST = [ scale, 0.0, 0.0, 
                  0.0, scale, 0.0 ]
 
@@ -86,7 +80,6 @@ def drawRandomTiling():
 
             if si.rev:
                 seg.reverse()
-            # print(seg)
 
             if start:
                 start = False
@@ -104,12 +97,12 @@ def drawRandomTiling():
 
 def setup():
     size(1000, 1000)
-    no_loop()
+    # no_loop()
 
 
 def draw():
     # stroke_weight(1)
-    # stroke(255,0,0)
+    # stroke(0,0,0)
     no_stroke()
     background(0)
     drawRandomTiling()
