@@ -261,19 +261,15 @@ class IsohedralTiling:
 
         def fillFixX(A, B, C, D, do_top):
             if A.x > B.x:
-                for thing in doFill( B, A, D, C, do_top ):
-                    yield thing
+                yield from doFill( B, A, D, C, do_top )
             else:
-                for thing in doFill( A, B, C, D, do_top ):
-                    yield thing
+                yield from doFill( A, B, C, D, do_top )
             
         def fillFixY(A, B, C, D, do_top):
             if A.y > C.y:
-                for thing in doFill( C, D, A, B, do_top ):
-                    yield thing
+                yield from doFill( C, D, A, B, do_top )
             else:
-                for thing in doFill( A, B, C, D, do_top ):
-                    yield thing
+                yield from doFill( A, B, C, D, do_top )
 
         det = 1.0 / (t1.x*t2.y-t2.x*t1.y)
         Mbc = [ t2.y * det, -t2.x * det, -t1.y * det, t1.x * det ]
@@ -286,11 +282,9 @@ class IsohedralTiling:
             pts[3] = tmp
 
         if abs( pts[0].y - pts[1].y ) < 1e-7:
-            for thing in fillFixY( pts[0], pts[1], pts[2], pts[3], True ):
-                yield thing
+            yield from fillFixY( pts[0], pts[1], pts[2], pts[3], True )
         elif abs( pts[1].y - pts[2].y ) < 1e-7:
-            for thing in fillFixY( pts[1], pts[2], pts[3], pts[0], True ):
-                yield thing
+            yield from fillFixY( pts[1], pts[2], pts[3], pts[0], True )
         else:
             lowest = 0
             for idx in range(1, 4):
@@ -309,21 +303,15 @@ class IsohedralTiling:
             if left.y < right.y:
                 r1 = sampleAtHeight( bottom, right, left.y )
                 l2 = sampleAtHeight( left, top, right.y )
-                for thing in fillFixX( bottom, bottom, r1, left, False ):
-                    yield thing
-                for thing in fillFixX( left, r1, right, l2, False ):
-                    yield thing
-                for thing in fillFixX( l2, right, top, top, True ):
-                    yield thing
+                yield from fillFixX( bottom, bottom, r1, left, False )
+                yield from fillFixX( left, r1, right, l2, False )
+                yield from fillFixX( l2, right, top, top, True )
             else:
                 l1 = sampleAtHeight( bottom, left, right.y )
                 r2 = sampleAtHeight( right, top, left.y )
-                for thing in fillFixX( bottom, bottom, right, l1, False ):
-                    yield thing
-                for thing in fillFixX( l1, right, r2, left, False ):
-                    yield thing
-                for thing in fillFixX( left, r2, top, top, True ):
-                    yield thing
+                yield from fillFixX( bottom, bottom, right, l1, False )
+                yield from fillFixX( l1, right, r2, left, False )
+                yield from fillFixX( left, r2, top, top, True )
 
     def getColour(self, a, b, asp):
 
