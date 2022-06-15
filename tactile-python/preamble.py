@@ -5,6 +5,7 @@
 # file "LICENSE" for more information.
 
 from enum import Enum
+from collections import namedtuple
 
 class EdgeShape(Enum):
     J = 10001
@@ -15,12 +16,28 @@ class EdgeShape(Enum):
 numTypes = 81
 
 
+Point = namedtuple('Point', ['x', 'y'])
+
+Shape = namedtuple('Shape',
+[
+                    "T",
+                    "id",
+                    "shape",
+                    "rev",
+                    "second",
+                    "t1",
+                    "t2",
+                    "aspect"
+], defaults=[None,None,None,None,False, None, None, None]
+    )
+
+
 def mul( A, B ):
 	if hasattr( B, 'x' ):
 		# Matrix * Point
-		return { 
-			x : A[0]*B.x + A[1]*B.y + A[2],
-			y : A[3]*B.x + A[4]*B.y + A[5] }
+		return Point(**{ 
+			"x" : A[0]*B.x + A[1]*B.y + A[2],
+			"y" : A[3]*B.x + A[4]*B.y + A[5] })
 	else:
 		# Matrix * Matrix
 		return [A[0]*B[0] + A[1]*B[3], 

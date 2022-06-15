@@ -1,4 +1,4 @@
-from preamble import EdgeShape, mul, matchSeg, numTypes
+from preamble import EdgeShape, mul, matchSeg, numTypes, Shape, Point
 from tiling_data import TilingTypeData, tilingTypes
 
 import math
@@ -13,7 +13,7 @@ def makePoint( coeffs, offs, params ):
         x += coeffs[offs+i] * params[i]
         y += coeffs[offs+len(params)+i] * params[i]
 
-    ret = { x : 0.0, y : 0.0 }
+    ret = Point(**{ "x" : x, "y" : y })
 
     return ret
 
@@ -124,12 +124,12 @@ class IsohedralTiling:
         for idx in range(self.numVertices()):
             an_id = self.ttd.edge_shape_ids[idx]
 
-            yield {
-                T : self.edges[idx],
-                id : an_id,
-                shape : self.ttd.edge_shapes[ an_id ],
-                rev : self.reversals[ idx ]
-            }
+            yield Shape(**{
+                "T" : self.edges[idx],
+                "id" : an_id,
+                "shape" : self.ttd.edge_shapes[ an_id ],
+                "rev" : self.reversals[ idx ]
+            })
 
     def parts(self):
         for idx in range(self.numVertices()):
@@ -137,32 +137,32 @@ class IsohedralTiling:
             shp = self.ttd.edge_shapes[an_id]
 
             if (shp == EdgeShape.J) or (shp == EdgeShape.I):
-                yield {
-                    T : self.edges[idx],
-                    id : an_id,
-                    shape : shp,
-                    rev : self.reversals[ idx ],
-                    second : false
-                }
+                yield Shape(**{
+                    "T" : self.edges[idx],
+                    "id" : an_id,
+                    "shape" : shp,
+                    "rev" : self.reversals[ idx ],
+                    "second" : False
+                })
             else:
                 indices =  [1,0] if self.reversals[idx] else [0,1]
                 Ms = TSPI_U if (shp == EdgeShape.U) else TSPI_S
 
-                yield {
-                    T : mul( self.edges[idx], Ms[indices[0]] ),
-                    id : an_id,
-                    shape : shp,
-                    rev : false,
-                    second : false
-                }
+                yield Shape(**{
+                    "T" : mul( self.edges[idx], Ms[indices[0]] ),
+                    "id" : an_id,
+                    "shape" : shp,
+                    "rev" : False,
+                    "second" : False
+                })
                 
-                yield {
-                    T : mul( self.edges[idx], Ms[indices[1]] ),
-                    id : an_id,
-                    shape : shp,
-                    rev : true,
-                    second : true
-                }
+                yield Shape(**{
+                    "T" : mul( self.edges[idx], Ms[indices[1]] ),
+                    "id" : an_id,
+                    "shape" : shp,
+                    "rev" : True,
+                    "second" : True
+                })
 
     def numVertices(self):
         return self.ttd.num_vertices
@@ -189,11 +189,12 @@ class IsohedralTiling:
         return self.t2  # todo: this used to use the ... js operator
 
     def fillRegionBounds(self, xmin, ymin, xmax, ymax):
-        yield self.fillRegionQuad(
-            { x : xmin, y : ymin },
-            { x : xmax, y : ymin },
-            { x : xmax, y : ymax },
-            { x : xmin, y : ymax } )
+        for shape in self.fillRegionQuad(
+            Point(**{ "x" : xmin, "y" : ymin }),
+            Point(**{ "x" : xmax, "y" : ymin }),
+            Point(**{ "x" : xmax, "y" : ymax }),
+            Point(**{ "x" : xmin, "y" : ymax }) ):
+            yield shape
 
     def fillRegionQuad(self, A, B, C, D):
         t1 = self.getT1()
@@ -201,18 +202,19 @@ class IsohedralTiling:
         ttd = self.ttd
         aspects = self.aspects
 
-        last_y = None  # todo
+        self.last_y = None
 
         def bc( M, p ):
-            return { 
-                x : M[0]*p.x + M[1]*p.y,
-                y : M[2]*p.x + M[3]*p.y }
+            return Point(**{ 
+                "x" : M[0]*p.x + M[1]*p.y,
+                "y" : M[2]*p.x + M[3]*p.y })
 
         def sampleAtHeight(P, Q, y):
             t = (y-P.y)/(Q.y-P.y)
-            return { x : (1.0-t)*P.x + t*Q.x, y : y }
+            return Point(**{ "x" : (1.0-t)*P.x + t*Q.x, "y" : y })
 
         def doFill(A, B, C, D, do_top):
+
             x1 = A.x
             dx1 = (D.x-A.x)/(D.y-A.y)
             x2 = B.x
@@ -224,8 +226,8 @@ class IsohedralTiling:
                 ymax = ymax + 1.0
 
             y = math.floor( ymin )
-            if last_y:
-                y = max( last_y, y )
+            if self.last_y :
+                y = max( self.last_y , y )
             
 
             while y < ymax:
@@ -239,12 +241,16 @@ class IsohedralTiling:
                         M[2] += xi*t1.x + yi*t2.x
                         M[5] += xi*t1.y + yi*t2.y
 
-                        yield {
-                            T : M,
-                            t1 : xi,
-                            t2 : yi,
-                            aspect : asp
-                        }
+                        yield Shape(**{
+                            "T" : M,
+                            "id": False,
+                            "shape": False,
+                            "rev": False,
+                            "second": False,
+                            "t1" : xi,
+                            "t2" : yi,
+                            "aspect" : asp
+                        })
 
                     x += 1.0
                 
@@ -252,19 +258,23 @@ class IsohedralTiling:
                 x2 += dx2
                 y += 1.0
 
-            last_y = y
+            self.last_y  = y
 
         def fillFixX(A, B, C, D, do_top):
             if A.x > B.x:
-                yield doFill( B, A, D, C, do_top )
+                for thing in doFill( B, A, D, C, do_top ):
+                    yield thing
             else:
-                yield doFill( A, B, C, D, do_top )
+                for thing in doFill( A, B, C, D, do_top ):
+                    yield thing
             
         def fillFixY(A, B, C, D, do_top):
             if A.y > C.y:
-                yield doFill( C, D, A, B, do_top )
+                for thing in doFill( C, D, A, B, do_top ):
+                    yield thing
             else:
-                yield doFill( A, B, C, D, do_top )
+                for thing in doFill( A, B, C, D, do_top ):
+                    yield thing
 
         det = 1.0 / (t1.x*t2.y-t2.x*t1.y)
         Mbc = [ t2.y * det, -t2.x * det, -t1.y * det, t1.x * det ]
@@ -277,9 +287,11 @@ class IsohedralTiling:
             pts[3] = tmp
 
         if abs( pts[0].y - pts[1].y ) < 1e-7:
-            yield fillFixY( pts[0], pts[1], pts[2], pts[3], true )
+            for thing in fillFixY( pts[0], pts[1], pts[2], pts[3], True ):
+                yield thing
         elif abs( pts[1].y - pts[2].y ) < 1e-7:
-            yield fillFixY( pts[1], pts[2], pts[3], pts[0], true )
+            for thing in fillFixY( pts[1], pts[2], pts[3], pts[0], True ):
+                yield thing
         else:
             lowest = 0
             for idx in range(1, 4):
@@ -298,15 +310,21 @@ class IsohedralTiling:
             if left.y < right.y:
                 r1 = sampleAtHeight( bottom, right, left.y )
                 l2 = sampleAtHeight( left, top, right.y )
-                yield fillFixX( bottom, bottom, r1, left, false )
-                yield fillFixX( left, r1, right, l2, false )
-                yield fillFixX( l2, right, top, top, true )
+                for thing in fillFixX( bottom, bottom, r1, left, False ):
+                    yield thing
+                for thing in fillFixX( left, r1, right, l2, False ):
+                    yield thing
+                for thing in fillFixX( l2, right, top, top, True ):
+                    yield thing
             else:
                 l1 = sampleAtHeight( bottom, left, right.y )
                 r2 = sampleAtHeight( right, top, left.y )
-                yield fillFixX( bottom, bottom, right, l1, false )
-                yield fillFixX( l1, right, r2, left, false )
-                yield fillFixX( left, r2, top, top, true )
+                for thing in fillFixX( bottom, bottom, right, l1, False ):
+                    yield thing
+                for thing in fillFixX( l1, right, r2, left, False ):
+                    yield thing
+                for thing in fillFixX( left, r2, top, top, True ):
+                    yield thing
 
     def getColour(self, a, b, asp):
 
