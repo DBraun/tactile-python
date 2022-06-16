@@ -6,7 +6,7 @@ See [`tactile`'s original README file](https://github.com/isohedral/tactile/blob
 
 ## Install
 
-`pip install tactile-python`
+`pip install tactile`
 
 ## Demo
 
