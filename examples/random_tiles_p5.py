@@ -106,12 +106,12 @@ def drawRandomTiling():
 
 def setup():
     p5.size(1000, 1000)
-    # no_loop()
+    # p5.no_loop()
 
 
 def draw():
-    # stroke_weight(1)
-    # stroke(0,0,0)
+    # p5.stroke_weight(1)
+    # p5.stroke(0,0,0)
     p5.no_stroke()
     p5.background(0)
     drawRandomTiling()
