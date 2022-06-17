@@ -10,7 +10,9 @@ See [`tactile`'s original README file](https://github.com/isohedral/tactile/blob
 
 ## Demo
 
-See `examples/demo.py` which requires [`p5`](https://p5.readthedocs.io/en/latest/). It will display random tilings in a window.
+See `examples/random_tiles_p5.py` which requires [`p5`](https://p5.readthedocs.io/en/latest/). It will display random tilings in a window.
+
+![Animating random tiles](docs/random-tiles.gif?raw=true "Animating random tiles")
 
 ## License
 

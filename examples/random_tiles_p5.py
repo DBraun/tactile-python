@@ -115,6 +115,7 @@ def draw():
     p5.no_stroke()
     p5.background(0)
     drawRandomTiling()
+    p5.save_frame()
 
 
 if __name__ == '__main__':
