@@ -11,9 +11,6 @@ class EdgeShape(Enum):
     S = 10003
     I = 10004
 
-
-numTypes = 81
-
 Point = namedtuple('Point', ['x', 'y'])
 
 Shape = namedtuple('Shape', [

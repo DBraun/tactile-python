@@ -7,7 +7,7 @@ tiling_types = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
     61, 62, 64, 66, 67, 68, 69, 71, 72, 73, 74, 76, 77, 78, 79, 81, 82, 83, 84,
     85, 86, 88, 90, 91, 93]
  
-Tile = namedtuple('Tile',
+Tiling = namedtuple('Tiling',
     [
             "num_params",
             "num_aspects",
@@ -1825,7 +1825,7 @@ class TilingTypeData:
 
     ]
 
-    _data = [Tile(**datum) if datum is not None else None for datum in _data]    
+    _data = [Tiling(**datum) if datum is not None else None for datum in _data]    
 
     @staticmethod
     def get_data(key):

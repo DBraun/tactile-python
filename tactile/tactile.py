@@ -1,34 +1,51 @@
-from .preamble import EdgeShape, mul, matchSeg, numTypes, Shape, Point
-from .tiling_data import TilingTypeData, tiling_types
+from .preamble import EdgeShape, mul, matchSeg, Shape, Point
+from .tiling_data import TilingTypeData, Tiling, tiling_types
 
 import math
 import copy
+from typing import List
 
 
-def makePoint(coeffs, offs, params):
+def make_point(coeffs, offs, params):
 
-    x, y = 0, 0
+    # This is a bit messy because the tactile-js source code
+    # pretends to have an extra 1.0 value tacked onto the end of the params.
+    # We don't do that in this library, however. So instead, we have to 
+    # account for it in this `make_point` function.
+    len_params = len(params)
+    len_params_plus_one = len_params+1
+
+    x = coeffs[offs + len_params]
+    y = coeffs[offs + len_params_plus_one+len_params]
 
     for i, param in enumerate(params):
         x += coeffs[offs + i] * param
-        y += coeffs[offs + len(params) + i] * param
+        y += coeffs[offs + len_params_plus_one + i] * param
 
     point = Point(x, y)
 
     return point
 
 
-def makeMatrix(coeffs, offs, params):
+def make_matrix(coeffs, offs, params):
     ret = []
+
+    # This is a bit messy because the tactile-js source code
+    # pretends to have an extra 1.0 value tacked onto the end of the params.
+    # We don't do that in this library, however. So instead, we have to 
+    # account for it in this `make_point` function.
+    len_params = len(params)
+    len_params_plus_one = len_params+1
 
     for row in range(2):
         for col in range(3):
-            val = 0.0
+            
+            val = coeffs[offs + len_params]
 
             for idx, param in enumerate(params):
                 val += coeffs[offs + idx] * param
             ret.append(val)
-            offs += len(params)
+            offs += len_params_plus_one
 
     return ret
 
@@ -46,27 +63,26 @@ TSPI_S = [[0.5, 0.0, 0.0, 0.0, 0.5, 0.0], [-0.5, 0.0, 1.0, 0.0, -0.5, 0.0]]
 
 
 class IsohedralTiling:
-    def __init__(self, tp):
+
+    def __init__(self, tp: Tiling):
         self.reset(tp)
 
-    def reset(self, tp):
-
-        self.tiling_type = tp
+    def reset(self, tp: Tiling):
+        self._tiling_type = tp
         self.ttd = TilingTypeData.get_data(tp)
-        self.parameters = copy.deepcopy(self.ttd.default_params)
-        self.parameters.append(1.0)
-        self.recompute()
+        self._parameters = copy.deepcopy(self.ttd.default_params)
+        self._recompute()
 
-    def recompute(self):
-        ntv = self.numVertices()
-        np = self.numParameters()
-        na = self.numAspects()
+    def _recompute(self):
+        ntv = self.num_vertices
+        np = self.num_parameters
+        na = self.num_aspects
 
         # Recompute tiling vertex locations.
         self.verts = []
         for idx in range(ntv):
             self.verts.append(
-                makePoint(self.ttd.vertex_coeffs, idx * (2 * (np + 1)), self.parameters)
+                make_point(self.ttd.vertex_coeffs, idx * (2 * (np + 1)), self._parameters)
             )
 
         # Recompute edge transforms and reversals from orientation information.
@@ -84,38 +100,54 @@ class IsohedralTiling:
             )
 
         # Recompute aspect xforms.
-        self.aspects = []
+        self._aspects = []
         for idx in range(na):
-            self.aspects.append(
-                makeMatrix(self.ttd.aspect_coeffs, 6 * (np + 1) * idx, self.parameters)
+            self._aspects.append(
+                make_matrix(self.ttd.aspect_coeffs, 6 * (np + 1) * idx, self._parameters)
             )
 
         # Recompute translation vectors.
-        self.t1 = makePoint(self.ttd.translation_coeffs, 0, self.parameters)
-        self.t2 = makePoint(self.ttd.translation_coeffs, 2 * (np + 1), self.parameters)
+        self._t1 = make_point(self.ttd.translation_coeffs, 0, self._parameters)
+        self._t2 = make_point(self.ttd.translation_coeffs, 2 * (np + 1), self._parameters)
 
-    def getTilingType(self):
-        return self.tiling_type
+    @property
+    def tiling_type(self):
+        return self._tiling_type
 
-    def numParameters(self):
+    @property
+    def num_parameters(self):
         return self.ttd.num_params
 
-    def setParameters(self, arr):
-        if len(arr) == (len(self.parameters) - 1):
-            self.parameters = arr + [1.0]
-            self.recompute()
+    @property
+    def parameters(self):
+        return self._parameters
 
-    def getParameters(self):
-        return self.parameters[:-1]
+    @parameters.setter
+    def parameters(self, arr: List[float]):
 
-    def numEdgeShapes(self):
+        if not isinstance(arr, list):
+            arg_type = type(arr)
+            raise ValueError(f'The passed parameters must be a pure Python list, but an arg of type "{arg_type}" was passed.')  
+
+        expected_length = self.num_parameters
+        passed_length = len(arr)
+        if passed_length != expected_length:
+            raise ValueError(f"The length of the passed parameters was {passed_length}, but {expected_length} was expected.")  
+
+        self._parameters = copy.deepcopy(arr)
+        self._recompute()
+
+    @property
+    def num_edge_shapes(self):
         return self.ttd.num_edge_shapes
 
-    def getEdgeShape(self, idx):
-        return self.ttd.edge_shapes[idx]
+    @property
+    def edge_shapes(self):
+        return self.ttd.edge_shapes
 
-    def shape(self):
-        for idx in range(self.numVertices()):
+    @property
+    def shapes(self):
+        for idx in range(self.num_vertices):
             an_id = self.ttd.edge_shape_ids[idx]
 
             yield Shape(
@@ -127,8 +159,9 @@ class IsohedralTiling:
                 }
             )
 
+    @property
     def parts(self):
-        for idx in range(self.numVertices()):
+        for idx in range(self.num_vertices):
             an_id = self.ttd.edge_shape_ids[idx]
             shp = self.ttd.edge_shapes[an_id]
 
@@ -166,52 +199,55 @@ class IsohedralTiling:
                     }
                 )
 
-    def numVertices(self):
+    @property
+    def num_vertices(self):
         return self.ttd.num_vertices
 
-    def getVertex(self, idx):
-        return self.verts[idx]
-
+    @property
     def vertices(self):
         return self.verts
 
-    def numAspects(self):
+    @property
+    def num_aspects(self):
         return self.ttd.num_aspects
 
-    def getAspectTransform(self, idx):
-        return self.aspects[idx]
+    @property
+    def aspects(self):
+        # aspect transforms
+        return self._aspects
 
-    def getT1(self):
-        return self.t1
+    @property
+    def t1(self):
+        return self._t1
 
-    def getT2(self):
-        return self.t2
+    @property
+    def t2(self):
+        return self._t2
 
-    def fillRegionBounds(self, xmin, ymin, xmax, ymax):
-        for shape in self.fillRegionQuad(
+    def fill_region_bounds(self, xmin: float, ymin: float, xmax: float, ymax: float):
+        yield from self._fill_region_quad(
             Point(xmin, ymin),
             Point(xmax, ymin),
             Point(xmax, ymax),
             Point(xmin, ymax)
-        ):
-            yield shape
+        )
 
-    def fillRegionQuad(self, A, B, C, D):
-        t1 = self.getT1()
-        t2 = self.getT2()
+    def _fill_region_quad(self, A: Point, B: Point, C: Point, D: Point):
+        t1 = self.t1
+        t2 = self.t2
         ttd = self.ttd
-        aspects = self.aspects
+        aspects = self._aspects
 
-        self.last_y = None
+        self._last_y = None
 
         def bc(M, p):
             return Point(M[0] * p.x + M[1] * p.y, M[2] * p.x + M[3] * p.y)
 
-        def sampleAtHeight(P, Q, y):
+        def sample_at_height(P, Q, y):
             t = (y - P.y) / (Q.y - P.y)
             return Point((1.0 - t) * P.x + t * Q.x, y)
 
-        def doFill(A, B, C, D, do_top):
+        def do_fill(A, B, C, D, do_top):
 
             x1 = A.x
             dx1 = (D.x - A.x) / (D.y - A.y)
@@ -224,8 +260,8 @@ class IsohedralTiling:
                 ymax = ymax + 1.0
 
             y = math.floor(ymin)
-            if self.last_y:
-                y = max(self.last_y, y)
+            if self._last_y:
+                y = max(self._last_y, y)
 
             while y < ymax:
                 yi = math.trunc(y)
@@ -257,19 +293,19 @@ class IsohedralTiling:
                 x2 += dx2
                 y += 1.0
 
-            self.last_y = y
+            self._last_y = y
 
-        def fillFixX(A, B, C, D, do_top):
+        def fill_fix_x(A, B, C, D, do_top):
             if A.x > B.x:
-                yield from doFill(B, A, D, C, do_top)
+                yield from do_fill(B, A, D, C, do_top)
             else:
-                yield from doFill(A, B, C, D, do_top)
+                yield from do_fill(A, B, C, D, do_top)
 
-        def fillFixY(A, B, C, D, do_top):
+        def fill_fix_y(A, B, C, D, do_top):
             if A.y > C.y:
-                yield from doFill(C, D, A, B, do_top)
+                yield from do_fill(C, D, A, B, do_top)
             else:
-                yield from doFill(A, B, C, D, do_top)
+                yield from do_fill(A, B, C, D, do_top)
 
         det = 1.0 / (t1.x * t2.y - t2.x * t1.y)
         Mbc = [t2.y * det, -t2.x * det, -t1.y * det, t1.x * det]
@@ -282,9 +318,9 @@ class IsohedralTiling:
             pts[3] = tmp
 
         if abs(pts[0].y - pts[1].y) < 1e-7:
-            yield from fillFixY(pts[0], pts[1], pts[2], pts[3], True)
+            yield from fill_fix_y(pts[0], pts[1], pts[2], pts[3], True)
         elif abs(pts[1].y - pts[2].y) < 1e-7:
-            yield from fillFixY(pts[1], pts[2], pts[3], pts[0], True)
+            yield from fill_fix_y(pts[1], pts[2], pts[3], pts[0], True)
         else:
             lowest = 0
             for idx in range(1, 4):
@@ -301,19 +337,19 @@ class IsohedralTiling:
                 left, right = right, left
 
             if left.y < right.y:
-                r1 = sampleAtHeight(bottom, right, left.y)
-                l2 = sampleAtHeight(left, top, right.y)
-                yield from fillFixX(bottom, bottom, r1, left, False)
-                yield from fillFixX(left, r1, right, l2, False)
-                yield from fillFixX(l2, right, top, top, True)
+                r1 = sample_at_height(bottom, right, left.y)
+                l2 = sample_at_height(left, top, right.y)
+                yield from fill_fix_x(bottom, bottom, r1, left, False)
+                yield from fill_fix_x(left, r1, right, l2, False)
+                yield from fill_fix_x(l2, right, top, top, True)
             else:
-                l1 = sampleAtHeight(bottom, left, right.y)
-                r2 = sampleAtHeight(right, top, left.y)
-                yield from fillFixX(bottom, bottom, right, l1, False)
-                yield from fillFixX(l1, right, r2, left, False)
-                yield from fillFixX(left, r2, top, top, True)
+                l1 = sample_at_height(bottom, left, right.y)
+                r2 = sample_at_height(right, top, left.y)
+                yield from fill_fix_x(bottom, bottom, right, l1, False)
+                yield from fill_fix_x(l1, right, r2, left, False)
+                yield from fill_fix_x(left, r2, top, top, True)
 
-    def getColor(self, a, b, asp):
+    def get_color(self, a, b, asp):
 
         clrg = self.ttd.coloring
         nc = clrg[18]
